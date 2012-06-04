@@ -47,7 +47,7 @@ package ca.digitalarchitect.box2dane
 		{
 			//Ensure we have a valid hex address here
 			if (address.search("x") == -1 || address.search("X") == -1) {
-				throw new VerifyError("An invalid memory address has been supplied to a b2Body constructor. This is most likely your fault for creating the object directly. That's what you did, isn't it, you bad kid.");
+				throw new VerifyError("An invalid memory address has been supplied to a native class constructor. This is most likely your fault for creating the object directly. That's what you did, isn't it, you bad kid.");
 			}
 			//
 			
