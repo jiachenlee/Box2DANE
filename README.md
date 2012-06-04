@@ -3,14 +3,16 @@ Box2DANE
 
 Box2D AIR Native Extension
 
-- Project Setup - 
+-- Project Setup --
+
 The Box2DANEC folder should be in your src directory of your project in Eclipse. Also, Box2D
 itself should be within your src folder. 
 
 For the Actionscript side of things, the project is a Flashdevelop project. So you'll need this
 if you want to conveniently work with the AS side.
 
-- Concept -
+-- Concept --
+
 The general idea for the design of this AIR Native Extension is that the Actionscript side should
 function purely as an interface to the methods on the native side. As such, every public method
 within Box2D (the C++ side) has been exposed to the Actionscript code, and every publically 
@@ -42,6 +44,7 @@ of the Box2DANE Actionscript classes. This exists solely for the native C side t
 an example of where this functionality is taken advantage of. Consider the following case:
 
 ----- Example -----
+
 Actionscript 3 Class instance of b2World is created. The context initalizer is called, with the 
 argument of simply "b2World". This means the initializer will create a brand new instance of a 
 b2World on the native side, and then configure the Actionscript 3 instance of that b2World to 
