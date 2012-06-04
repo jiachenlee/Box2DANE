@@ -1,0 +1,13 @@
+<extension xmlns="http://ns.adobe.com/air/extension/2.5"> 
+    <id>ca.digitalarchitect.Box2DANE</id> 
+    <versionNumber>2.3.0</versionNumber> 
+    <platforms> 
+        <platform name="Windows-x86"> 
+            <applicationDeployment> 
+                <nativeLibrary>libBox2DANE.dll</nativeLibrary> 
+                <initializer>initializer</initializer>
+                <finalizer>finalizer</finalizer>
+            </applicationDeployment> 
+        </platform> 
+    </platforms> 
+</extension>
