@@ -52,7 +52,7 @@ package ca.digitalarchitect.box2dane
 			//
 			
 			/* You might think we should return a Boolean here but we don't truck around, no monkey business.
-			 * If the address isn't valid, you're program DIES. DEAD. GET GOOD and it WON'T HAPPEN SON.
+			 * If the address isn't valid, your program DIES. DEAD. GET GOOD and it WON'T HAPPEN SON.
 			 */
 			return void;
 		}
