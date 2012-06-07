@@ -26,6 +26,12 @@ package ca.digitalarchitect.box2dane.common
 		{
 			initializeContext(this, memAddress);
 			
+			/* We actually don't use the get/set methods on the X/Y values here, because we don't want to
+			 * override the values that could potentially already be set inside the instance on the native
+			 * side. Take for instance when this constructor is called with a supplied memory address. The
+			 * object that the address points to could have something other than the default value supplied
+			 * to it, so if we applied a different value here, we'd override the existing values natively.
+			 */
 			nativeContext.call("ane_b2Vec2_constructor_b2Vec2", ...);
 		}
 

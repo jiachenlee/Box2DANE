@@ -37,6 +37,24 @@ std::map<std::string, int> classMapping;
 typedef std::pair<std::string, int> ClassMapPair;
 //
 
+void* convertStringToPointer(const uint8_t* address) {
+	std::stringstream ss;
+	ss << *address;
+	void* pointer;
+	ss >> std::hex >> pointer;
+
+	return pointer;
+}
+
+void* convertStringToPointer(uint8_t* address) {
+	std::stringstream ss;
+	ss << *address;
+	void* pointer;
+	ss >> std::hex >> pointer;
+
+	return pointer;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -714,7 +732,7 @@ void contextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, u
 
 			}
 
-			*numFunctions = 13;
+			*numFunctions = 12;
 
 			memberFunctions = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * (*numFunctions));
 
@@ -738,37 +756,33 @@ void contextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, u
 			memberFunctions[4].functionData = NULL;
 			memberFunctions[4].function = &ane_b2AABB_callback_Combine;
 
-			memberFunctions[5].name = (const uint8_t*)"ane_b2AABB_callback_Combine";
+			memberFunctions[5].name = (const uint8_t*)"ane_b2AABB_callback_Contains";
 			memberFunctions[5].functionData = NULL;
-			memberFunctions[5].function = &ane_b2AABB_callback_Combine;
+			memberFunctions[5].function = &ane_b2AABB_callback_Contains;
 
-			memberFunctions[6].name = (const uint8_t*)"ane_b2AABB_callback_Contains";
+			memberFunctions[6].name = (const uint8_t*)"ane_b2AABB_callback_RayCast";
 			memberFunctions[6].functionData = NULL;
-			memberFunctions[6].function = &ane_b2AABB_callback_Contains;
+			memberFunctions[6].function = &ane_b2AABB_callback_RayCast;
 
-			memberFunctions[7].name = (const uint8_t*)"ane_b2AABB_callback_RayCast";
+			memberFunctions[7].name = (const uint8_t*)"ane_b2AABB_setter_lowerBound";
 			memberFunctions[7].functionData = NULL;
-			memberFunctions[7].function = &ane_b2AABB_callback_RayCast;
+			memberFunctions[7].function = &ane_b2AABB_setter_lowerBound;
 
-			memberFunctions[8].name = (const uint8_t*)"ane_b2AABB_setter_lowerBound";
+			memberFunctions[8].name = (const uint8_t*)"ane_b2AABB_getter_lowerBound";
 			memberFunctions[8].functionData = NULL;
-			memberFunctions[8].function = &ane_b2AABB_setter_lowerBound;
+			memberFunctions[8].function = &ane_b2AABB_getter_lowerBound;
 
-			memberFunctions[9].name = (const uint8_t*)"ane_b2AABB_getter_lowerBound";
+			memberFunctions[9].name = (const uint8_t*)"ane_b2AABB_setter_upperBound";
 			memberFunctions[9].functionData = NULL;
-			memberFunctions[9].function = &ane_b2AABB_getter_lowerBound;
+			memberFunctions[9].function = &ane_b2AABB_setter_upperBound;
 
-			memberFunctions[10].name = (const uint8_t*)"ane_b2AABB_setter_upperBound";
+			memberFunctions[10].name = (const uint8_t*)"ane_b2AABB_getter_upperBound";
 			memberFunctions[10].functionData = NULL;
-			memberFunctions[10].function = &ane_b2AABB_setter_upperBound;
+			memberFunctions[10].function = &ane_b2AABB_getter_upperBound;
 
-			memberFunctions[11].name = (const uint8_t*)"ane_b2AABB_getter_upperBound";
+			memberFunctions[11].name = (const uint8_t*)"ane_getNativeDataMemoryAddress";
 			memberFunctions[11].functionData = NULL;
-			memberFunctions[11].function = &ane_b2AABB_getter_upperBound;
-
-			memberFunctions[12].name = (const uint8_t*)"ane_getNativeDataMemoryAddress";
-			memberFunctions[12].functionData = NULL;
-			memberFunctions[12].function = &ane_getNativeDataMemoryAddress;
+			memberFunctions[11].function = &ane_getNativeDataMemoryAddress;
 
 
 

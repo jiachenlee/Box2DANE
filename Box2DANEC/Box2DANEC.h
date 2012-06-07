@@ -15,20 +15,93 @@
 #ifndef BOX2DANEC_H
 #define BOX2DANEC_H
 
+//Wrapper function for "FRENewObjectFromUTF8" that doesn't require us to know the length of the string
+FREResult FRENewObjectFromUTF8(const uint8_t*  value, FREObject* object){
+	uint32_t length = strlen((const char*)value) + 1;
+
+	return FRENewObjectFromUTF8(length, value, object);
+}
+//
+
+//Wrapper function for "FRENewObjectFromUTF8" that gives us an actionscript 3 formatted string of a pointer address
+FREResult FRENewObjectFromUTF8(void* pointer, FREObject* object){
+	std::stringstream ss;
+	ss << pointer;
+	std::string address = ss.str();
+
+	return FRENewObjectFromUTF8((uint32_t)address.size()+1, (const uint8_t*)address.c_str(), object);
+}
+//
+
+//Central location for error reporting
+void FREError(const char* message) {
+	//Unimplimented
+}
+//
+
 //Used to retrieve the hex address of the native object associated with a FRE context and return it
 FREObject ane_getNativeDataMemoryAddress(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;
 	FREGetContextNativeData(ctx, &nativeData);
 
-	std::stringstream ss;
-	ss << nativeData;
-	std::string address = ss.str();
+	//Get the memory address of our native class instance
+	FREObject nativeAddress;
+	FRENewObjectFromUTF8(nativeData, &nativeAddress);
+	//
 
-	FREObject result;
+	/* Now we're going to pull out the AS3 class instances from the method argc array here and
+	 * directly associated this AS3 object with the native instance we have here.
+	 */
+	if(argc == 1) {
+		FREObjectType type;
+		FREResult findTypeResult = FREGetObjectType(argv[0], &type);
 
-	FRENewObjectFromUTF8((uint32_t)address.size()+1, (const uint8_t*)address.c_str(), &result);
+		//We do a lookup of the type here basically as a way to verify the validity of the object
+		if(findTypeResult != FRE_OK) {
+			FREError("Error retrieving AS3 Object type in function ane_getNativeDataMemoryAddress");
+		}
 
-	return result;
+		/* This is where we bind the current AS3 instance that represents our native instance to the context.
+		 * By doing this, we can now call up and work directly with the AS3 object representing the native side,
+		 * and the actual native instance wheresoever we are provided this context.
+		 */
+		FRESetContextActionScriptData(ctx, argv[0]);
+		//
+	}else{
+		FREError("Error: No AS3 class instance supplied to function ane_getNativeDataMemoryAddress");
+	}
+	//
+
+	return nativeAddress;
+}
+//
+
+/* This is a convenience function that will intake a FREObject pointer with a base class of
+ * "ca.digitalarchitect.box2dane.BaseNativeClass". This method attempts to retrieve the native
+ * address of the native object paired with this FREObject by reading the "memoryAddress" getter
+ * of the "BaseNativeClass." If this is successfull, we'll cast that address back to VOID pointer
+ * and return it.
+ */
+void* FREGetNativeInstancePointer(FREObject obj) {
+	FREObject as3ObjectNativeAddress, thrownException;
+	const uint8_t* propertyName = "memoryAddress";
+	FREGetObjectProperty(obj, propertyName, &as3ObjectNativeAddress, &thrownException);
+
+	uint32_t strLength;
+	const uint8_t* addressString;
+	FREResult getAddressResult = FREGetObjectAsUTF8(as3ObjectNativeAddress, &strLength, &addressString);
+
+	if(getAddressResult != FRE_OK) {
+		FREError("Error retrieving nativeAddress property from AS3 BaseNativeClass Object in function FREGetNativeInstancePointer");
+	}
+
+	void* ptr = convertStringToPointer(addressString);
+
+	if(ptr == NULL) {
+		FREError("Error retrieving native object AS3 BaseNativeClass Object in function FREGetNativeInstancePointer");
+	}
+
+	return ptr;
 }
 //
 

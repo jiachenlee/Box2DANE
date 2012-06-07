@@ -30,17 +30,23 @@ package ca.digitalarchitect.box2dane
 		protected function initializeContext(classType:Class, memAddress:String = null):void
 		{
 			if (memAddress != null) {
-				validateMemoryAddress(memAddress);
-				_memoryAddress = memAddress;
+				validateMemoryAddress(memAddress);				
 				
 				var className:String = getQualifiedClassName(classType);
 				
 				_extensionContext = ExtensionContext.createExtensionContext("ca.digitalarchitect.Box2DANE", className + "::" + _memoryAddress);
 			}else {
-				_extensionContext = ExtensionContext.createExtensionContext("ca.digitalarchitect.Box2DANE", className);
-				
-				_memoryAddress = _extensionContext.call("ane_getNativeDataMemoryAddress") as String;
+				_extensionContext = ExtensionContext.createExtensionContext("ca.digitalarchitect.Box2DANE", className);				
 			}
+			
+			/* The fetch memory address method is called whether we are already supplied the address or not. The
+			 * reason for this is because the "ane_getNativeDataMemoryAddress" function does one other key thing
+			 * behind the scenes: it associates the AS3 Class Instance that invoked this method (initializeContext)
+			 * directly with the native object we've either created or connected with here. This is important,
+			 * because both on the native side and the AS3 side, we need to know exactly which AS3 and Native
+			 * instances are paired together.
+			 */
+			_memoryAddress = _extensionContext.call("ane_getNativeDataMemoryAddress", classType) as String;
 		}
 		
 		protected function validateMemoryAddress(address:String):void
@@ -50,6 +56,8 @@ package ca.digitalarchitect.box2dane
 				throw new VerifyError("An invalid memory address has been supplied to a native class constructor. This is most likely your fault for creating the object directly. That's what you did, isn't it, you bad kid.");
 			}
 			//
+			
+			_memoryAddress = memAddress;
 			
 			/* You might think we should return a Boolean here but we don't truck around, no monkey business.
 			 * If the address isn't valid, your program DIES. DEAD. GET GOOD and it WON'T HAPPEN SON.

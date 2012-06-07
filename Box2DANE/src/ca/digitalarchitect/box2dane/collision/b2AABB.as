@@ -40,27 +40,22 @@ package ca.digitalarchitect.box2dane.collision
 
 		public function GetExtents():b2Vec2
 		{
-			return nativeContext.call("ane_b2AABB_callback_GetExtents", ...);
+			return nativeContext.call("ane_b2AABB_callback_GetExtents") as b2Vec2;
 		}
 
 		public function GetPerimeter():Number
 		{
-			return nativeContext.call("ane_b2AABB_callback_GetPerimeter", ...);
+			return nativeContext.call("ane_b2AABB_callback_GetPerimeter") as Number;
 		}
 
 		public function Combine(aabb:b2AABB):void
 		{
-			nativeContext.call("ane_b2AABB_callback_Combine", ...);
-		}
-
-		public function Combine(aabb1:b2AABB, aabb2:b2AABB):void
-		{
-			nativeContext.call("ane_b2AABB_callback_Combine", ...);
+			nativeContext.call("ane_b2AABB_callback_Combine", aabb);
 		}
 
 		public function Contains(aabb:b2AABB):Boolean
 		{
-			return nativeContext.call("ane_b2AABB_callback_Contains", ...);
+			return nativeContext.call("ane_b2AABB_callback_Contains", aabb) as Boolean;
 		}
 
 		public function RayCast(output:b2RayCastOutput, input:b2RayCastInput):Boolean
