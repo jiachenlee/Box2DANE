@@ -23,7 +23,7 @@ package ca.digitalarchitect.box2dane.collision
 		private var _v:b2Vec2;
 		private var _id:b2ContactID;
 
-		public b2ClipVertex(nativeMemoryAddress:String)
+		public b2ClipVertex(nativeMemoryAddress:String = null)
 		{
 			
 		}
@@ -34,7 +34,7 @@ package ca.digitalarchitect.box2dane.collision
 				return;
 			}
 			_v = val;
-			nativeContext.call("ane_b2ClipVertex_setter_v", ...);
+			nativeContext.call("ane_b2ClipVertex_setter_v", _v);
 		}
 
 		public function get v():b2Vec2

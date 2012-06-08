@@ -23,7 +23,7 @@ package ca.digitalarchitect.box2dane.collision
 		private var _lowerBound:b2Vec2;
 		private var _upperBound:b2Vec2;
 
-		public function b2AABB(nativeMemoryAddress:String)
+		public function b2AABB(nativeMemoryAddress:String = null)
 		{
 			initializeContext(this, nativeMemoryAddress);
 		}
@@ -60,7 +60,7 @@ package ca.digitalarchitect.box2dane.collision
 
 		public function RayCast(output:b2RayCastOutput, input:b2RayCastInput):Boolean
 		{
-			return nativeContext.call("ane_b2AABB_callback_RayCast", ...);
+			return nativeContext.call("ane_b2AABB_callback_RayCast", output, input) as Boolean;
 		}
 
 		public function set lowerBound(val:b2Vec2):void
@@ -69,12 +69,22 @@ package ca.digitalarchitect.box2dane.collision
 				return;
 			}
 			_lowerBound = val;
-			nativeContext.call("ane_b2AABB_setter_lowerBound", ...);
+			nativeContext.call("ane_b2AABB_setter_lowerBound", _lowerBound);
 		}
 
 		public function get lowerBound():b2Vec2
 		{
-			_lowerBound = nativeContext.call("ane_b2AABB_getter_lowerBound", ...);
+			/* In this getter, we don't want to be creating a new b2Vec2 on the stack every single
+			 * time we want to read the lowerBound variable. So, if we have already created one, we'll
+			 * simply pass it as a parameter to this getter and adjust it's values to match the values
+			 * of the b2aabb_instance.lowerBound vector.
+			 */
+			if (_lowerBound != null) {
+				nativeContext.call("ane_b2AABB_getter_lowerBound", _lowerBound);
+			}else {
+				_lowerBound = nativeContext.call("ane_b2AABB_getter_lowerBound") as b2Vec2;
+			}
+			
 			return _lowerBound;
 		}
 
@@ -84,12 +94,17 @@ package ca.digitalarchitect.box2dane.collision
 				return;
 			}
 			_upperBound = val;
-			nativeContext.call("ane_b2AABB_setter_upperBound", ...);
+			nativeContext.call("ane_b2AABB_setter_upperBound", _upperBound);
 		}
 
 		public function get upperBound():b2Vec2
 		{
-			_upperBound = nativeContext.call("ane_b2AABB_getter_upperBound", ...);
+			if (_upperBound != null) {
+				nativeContext.call("ane_b2AABB_getter_upperBound", _upperBound);
+			}else {
+				_upperBound = nativeContext.call("ane_b2AABB_getter_upperBound") as b2Vec2;
+			}
+			
 			return _upperBound;
 		}
 

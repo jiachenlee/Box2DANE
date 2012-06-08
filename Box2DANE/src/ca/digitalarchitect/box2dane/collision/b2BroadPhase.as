@@ -21,9 +21,10 @@ package ca.digitalarchitect.box2dane.collision
 	{
 		public static const e_nullProxy:int = -1;
 
-		public function b2BroadPhase()
+		public function b2BroadPhase(nativeMemoryAddress:String = null)
 		{
-			nativeContext.call("ane_b2BroadPhase_constructor_b2BroadPhase", ...);
+			initializeContext(this, nativeMemoryAddress);
+			//nativeContext.call("ane_b2BroadPhase_constructor_b2BroadPhase", ...);
 		}
 
 		public function CreateProxy(aabb:b2AABB, userData:Object):int

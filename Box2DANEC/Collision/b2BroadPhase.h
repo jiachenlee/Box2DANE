@@ -32,6 +32,8 @@ FREObject ane_b2BroadPhase_callback_CreateProxy(FREContext ctx, void* functionDa
 	void* nativeData;
 	FREGetContextNativeData(ctx, &nativeData);
 	b2BroadPhase* b2BroadPhase_instance = (b2BroadPhase*)(nativeData);
+
+
 //	b2BroadPhase_instance->CreateProxy(...);
 	FREObject result;
 	return result;

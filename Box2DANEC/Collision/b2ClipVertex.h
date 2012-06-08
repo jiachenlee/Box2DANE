@@ -16,12 +16,11 @@
 #define BOX2DANE_C_B2CLIPVERTEX_H_
 
 
-
-
 FREObject ane_b2ClipVertex_setter_v(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;
 	FREGetContextNativeData(ctx, &nativeData);
 	b2ClipVertex* b2ClipVertex_instance = (b2ClipVertex*)(nativeData);
+
 //	b2ClipVertex_instance->v= ...;
 	FREObject result;
 	return result;

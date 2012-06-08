@@ -63,3 +63,84 @@ Actionscript 3 instance to the AS3 side and the AS3 developer has no idea becaus
 is hidden away from him/her.
 
 ----- End Example -----
+
+-- Getters and Setters --
+
+The idea on the AS3 side is to simply interface with a native instance of the class we're using. So,
+for example, if we have an AS3 b2AABB instance, any readable property on it is a getter and setter
+that actually just does an extensionContext.call(). In this case we need to consider the very real
+possibility of creating a ton of new native instances on the stack every time a property is read. To
+deal with this issue, once a property has been set on the AS3, if it exists when the getter is called
+we simply updated that instance and return it again. For example:
+
+	public function get lowerBound():b2Vec2
+	{
+		/* In this getter, we don't want to be creating a new b2Vec2 on the stack every single
+		 * time we want to read the lowerBound variable. So, if we have already created one, we'll
+		 * simply pass it as a parameter to this getter and adjust it's values to match the values
+		 * of the b2aabb_instance.lowerBound vector.
+		 */
+		if (_lowerBound != null) {
+			nativeContext.call("ane_b2AABB_getter_lowerBound", _lowerBound);
+		}else {
+			_lowerBound = nativeContext.call("ane_b2AABB_getter_lowerBound") as b2Vec2;
+		}
+		
+		return _lowerBound;
+	}
+	
+On the native side, the "ane_b2AABB_getter_lowerBound" callback method simply checks to see if we've
+supplied a function argument or not. If we have, it pulls up that native instance and updates it. If
+we have not, it will create and return a new instance. This same practice is used within all like
+classes that have access controlled properties. Just for completeness, the native callback looks
+like this:
+
+	FREObject ane_b2AABB_getter_lowerBound(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
+		void* nativeData;
+		FREGetContextNativeData(ctx, &nativeData);
+		b2AABB* b2AABB_instance = (b2AABB*)(nativeData);
+
+		/* This getter function can work one of two ways. It can either accept a single parameter which
+		 * is an AS3 b2Vec2 instance, from which we will retrive the native b2Vec2 and assign it to the
+		 * value of b2AABB_instance->lowerBound. OR, if no argument is received, it means we need to create
+		 * a new b2Vec2 instance, set it equal to b2AABB_instance->lowerBound and return it.
+		 */
+
+		FREObject lowerBoundAS3Object;
+
+		if(argc == 1) {
+			/* An instance has been supplied. Update it */
+			lowerBoundAS3Object = argv[0];
+			void* lowerBoundb2Vec2Instance = FREGetNativeInstancePointer(lowerBoundAS3Object);
+			b2Vec2* lowerBound = (b2Vec2*)lowerBoundb2Vec2Instance;
+			*lowerBound = b2AABB_instance->lowerBound;
+		}else{
+			/*	Create a new b2Vec2 AS3 instance */
+
+			b2Vec2* lowerBound = new b2Vec2(b2AABB_instance->lowerBound);
+
+			//AS3 b2Vec2 constructor arguments
+			FREObject valueX, valueY, b2Vec2MemAddress, b2Vec2AS3Object, initException;
+			FREObject constructorArguments[3];
+			FRENewObjectFromInt32(0, &valueX);
+			FRENewObjectFromInt32(0, &valueY);
+			FRENewObjectFromUTF8Pointer((void*)lowerBound, &b2Vec2MemAddress);
+			constructorArguments[0] = valueX;
+			constructorArguments[1] = valueY;
+			constructorArguments[2] = b2Vec2MemAddress;
+			//
+
+			const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.common.b2Vec2";
+
+			FREResult objInitResult = FRENewObject(className, 3, constructorArguments, &b2Vec2AS3Object, &initException);
+
+			if(objInitResult != FRE_OK) {
+				FREError("Error creating b2Vec2 object in function ane_b2AABB_getter_lowerBound");
+			}
+			/*	End Create a new b2Vec2 AS3 instance */
+
+			lowerBoundAS3Object = b2Vec2AS3Object;
+		}
+
+		return lowerBoundAS3Object;
+	}
