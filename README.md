@@ -71,7 +71,7 @@ for example, if we have an AS3 b2AABB instance, any readable property on it is a
 that actually just does an extensionContext.call(). In this case we need to consider the very real
 possibility of creating a ton of new native instances on the stack every time a property is read. To
 deal with this issue, once a property has been set on the AS3, if it exists when the getter is called
-we simply updated that instance and return it again. For example:
+we simply update that instance and return it again. For example:
 
 	public function get lowerBound():b2Vec2
 	{
