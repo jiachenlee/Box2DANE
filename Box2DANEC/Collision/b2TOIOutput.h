@@ -15,8 +15,45 @@
 #ifndef BOX2DANE_C_B2TOIOUTPUT_H_
 #define BOX2DANE_C_B2TOIOUTPUT_H_
 
+//Convenience functions for generating a new AS3 class instance of b2TOIOutput
+FREResult FRENewObjectFromb2TOIOutput(b2TOIOutput* obj, FREObject as3Object) {
 
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[1];
+	FREGetPointerAsString((void*)obj, &memAddress);
+	constructorArguments[0] = memAddress;
+	//
 
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.collision.b2TOIOutput";
+
+	FREResult objInitResult = FRENewObject(className, 1, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2TOIOutput object in function FRENewObjectFromb2TOIOutput");
+	}
+
+	return objInitResult;
+}
+
+FREResult FRENewb2TOIOutput(FREObject as3Object) {
+
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[0];
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.collision.b2TOIOutput";
+
+	FREResult objInitResult = FRENewObject(className, 0, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2TOIOutput object in function FRENewb2TOIOutput");
+	}
+
+	return objInitResult;
+}
+//
 
 FREObject ane_b2TOIOutput_setter_state(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;

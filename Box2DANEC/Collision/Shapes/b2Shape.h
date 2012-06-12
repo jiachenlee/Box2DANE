@@ -15,8 +15,45 @@
 #ifndef BOX2DANE_C_B2SHAPE_H_
 #define BOX2DANE_C_B2SHAPE_H_
 
+//Convenience functions for generating a new AS3 class instance of b2Shape
+FREResult FRENewObjectFromb2Shape(b2Shape* obj, FREObject as3Object) {
 
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[1];
+	FREGetPointerAsString((void*)obj, &memAddress);
+	constructorArguments[0] = memAddress;
+	//
 
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.collision.shapes.b2Shape";
+
+	FREResult objInitResult = FRENewObject(className, 1, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2Shape object in function FRENewObjectFromb2Shape");
+	}
+
+	return objInitResult;
+}
+
+FREResult FRENewb2Shape(FREObject as3Object) {
+
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[0];
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.collision.shapes.b2Shape";
+
+	FREResult objInitResult = FRENewObject(className, 0, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2Shape object in function FRENewb2Shape");
+	}
+
+	return objInitResult;
+}
+//
 
 FREObject ane_b2Shape_callback_Clone(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;

@@ -15,8 +15,45 @@
 #ifndef BOX2DANE_C_B2JOINT_H_
 #define BOX2DANE_C_B2JOINT_H_
 
+//Convenience functions for generating a new AS3 class instance of b2Joint
+FREResult FRENewObjectFromb2Joint(b2Joint* obj, FREObject as3Object) {
 
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[1];
+	FREGetPointerAsString((void*)obj, &memAddress);
+	constructorArguments[0] = memAddress;
+	//
 
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.dynamics.joints.b2Joint";
+
+	FREResult objInitResult = FRENewObject(className, 1, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2Joint object in function FRENewObjectFromb2Joint");
+	}
+
+	return objInitResult;
+}
+
+FREResult FRENewb2Joint(FREObject as3Object) {
+
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[0];
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.dynamics.joints.b2Joint";
+
+	FREResult objInitResult = FRENewObject(className, 0, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2Joint object in function FRENewb2Joint");
+	}
+
+	return objInitResult;
+}
+//
 
 FREObject ane_b2Joint_callback_GetType(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;

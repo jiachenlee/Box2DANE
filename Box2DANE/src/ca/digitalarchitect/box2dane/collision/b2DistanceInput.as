@@ -26,9 +26,9 @@ package ca.digitalarchitect.box2dane.collision
 		private var _transformB:b2Transform;
 		private var _useRadii:Boolean;
 
-		public b2DistanceInput(nativeMemoryAddress:String)
+		public b2DistanceInput(nativeMemoryAddress:String = null)
 		{
-			
+			initializeContext(this, nativeMemoryAddress);
 		}
 
 		public function set proxyA(val:b2DistanceProxy):void
@@ -37,12 +37,17 @@ package ca.digitalarchitect.box2dane.collision
 				return;
 			}
 			_proxyA = val;
-			nativeContext.call("ane_b2DistanceInput_setter_proxyA", ...);
+			nativeContext.call("ane_b2DistanceInput_setter_proxyA", _proxyA);
 		}
 
 		public function get proxyA():b2DistanceProxy
 		{
-			_proxyA = nativeContext.call("ane_b2DistanceInput_getter_proxyA", ...);
+			if (_proxyA != null) {
+				nativeContext.call("ane_b2DistanceInput_getter_proxyA", _proxyA);
+			}else {
+				_proxyA = nativeContext.call("ane_b2DistanceInput_getter_proxyA") as b2DistanceProxy;
+			}
+
 			return _proxyA;
 		}
 
@@ -52,12 +57,17 @@ package ca.digitalarchitect.box2dane.collision
 				return;
 			}
 			_proxyB = val;
-			nativeContext.call("ane_b2DistanceInput_setter_proxyB", ...);
+			nativeContext.call("ane_b2DistanceInput_setter_proxyB", _proxyB);
 		}
 
 		public function get proxyB():b2DistanceProxy
 		{
-			_proxyB = nativeContext.call("ane_b2DistanceInput_getter_proxyB", ...);
+			if (_proxyB != null) {
+				nativeContext.call("ane_b2DistanceInput_getter_proxyB", _proxyB);
+			}else {
+				_proxyB = nativeContext.call("ane_b2DistanceInput_getter_proxyB") as b2DistanceProxy;
+			}
+			
 			return _proxyB;
 		}
 
@@ -67,12 +77,17 @@ package ca.digitalarchitect.box2dane.collision
 				return;
 			}
 			_transformA = val;
-			nativeContext.call("ane_b2DistanceInput_setter_transformA", ...);
+			nativeContext.call("ane_b2DistanceInput_setter_transformA", _transformA);
 		}
 
 		public function get transformA():b2Transform
 		{
-			_transformA = nativeContext.call("ane_b2DistanceInput_getter_transformA", ...);
+			if (_transformA != null) {
+				nativeContext.call("ane_b2DistanceInput_getter_transformA", _transformA);
+			}else {
+				_transformA = nativeContext.call("ane_b2DistanceInput_getter_transformA") as b2Transform;
+			}
+			
 			return _transformA;
 		}
 
@@ -82,12 +97,17 @@ package ca.digitalarchitect.box2dane.collision
 				return;
 			}
 			_transformB = val;
-			nativeContext.call("ane_b2DistanceInput_setter_transformB", ...);
+			nativeContext.call("ane_b2DistanceInput_setter_transformB", _transformB);
 		}
 
 		public function get transformB():b2Transform
 		{
-			_transformB = nativeContext.call("ane_b2DistanceInput_getter_transformB", ...);
+			if (_transformB != null) {
+				nativeContext.call("ane_b2DistanceInput_getter_transformB", _transformB);
+			}else {
+				_transformB = nativeContext.call("ane_b2DistanceInput_getter_transformB") as b2Transform;
+			}
+
 			return _transformB;
 		}
 
@@ -97,12 +117,12 @@ package ca.digitalarchitect.box2dane.collision
 				return;
 			}
 			_useRadii = val;
-			nativeContext.call("ane_b2DistanceInput_setter_useRadii", ...);
+			nativeContext.call("ane_b2DistanceInput_setter_useRadii", _useRadii);
 		}
 
 		public function get useRadii():Boolean
 		{
-			_useRadii = nativeContext.call("ane_b2DistanceInput_getter_useRadii", ...);
+			_useRadii = nativeContext.call("ane_b2DistanceInput_getter_useRadii") as Boolean;
 			return _useRadii;
 		}
 

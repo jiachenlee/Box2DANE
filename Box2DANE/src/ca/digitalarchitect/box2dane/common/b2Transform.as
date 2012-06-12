@@ -22,14 +22,13 @@ package ca.digitalarchitect.box2dane.common
 		private var _p:b2Vec2;
 		private var _q:b2Rot;
 
-		public function b2Transform()
+		public function b2Transform(position:b2Vec2, rotation:b2Rot, nativeMemoryAddress:String = null)
 		{
-			nativeContext.call("ane_b2Transform_constructor_b2Transform", ...);
-		}
-
-		public function b2Transform(position:b2Vec2, rotation:b2Rot)
-		{
-			nativeContext.call("ane_b2Transform_constructor_b2Transform", ...);
+			initializeContext(this, nativeMemoryAddress);
+			
+			if (position != null && rotation != null) {
+				nativeContext.call("ane_b2Transform_constructor_b2Transform", position, rotation);
+			}			
 		}
 
 		public function SetIdentity():void

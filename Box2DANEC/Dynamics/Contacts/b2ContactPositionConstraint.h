@@ -15,8 +15,45 @@
 #ifndef BOX2DANE_C_B2CONTACTPOSITIONCONSTRAINT_H_
 #define BOX2DANE_C_B2CONTACTPOSITIONCONSTRAINT_H_
 
+//Convenience functions for generating a new AS3 class instance of b2ContactPositionConstraint
+FREResult FRENewObjectFromb2ContactPositionConstraint(b2ContactPositionConstraint* obj, FREObject as3Object) {
 
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[1];
+	FREGetPointerAsString((void*)obj, &memAddress);
+	constructorArguments[0] = memAddress;
+	//
 
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.dynamics.contacts.b2ContactPositionConstraint";
+
+	FREResult objInitResult = FRENewObject(className, 1, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2ContactPositionConstraint object in function FRENewObjectFromb2ContactPositionConstraint");
+	}
+
+	return objInitResult;
+}
+
+FREResult FRENewb2ContactPositionConstraint(FREObject as3Object) {
+
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[0];
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.dynamics.contacts.b2ContactPositionConstraint";
+
+	FREResult objInitResult = FRENewObject(className, 0, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2ContactPositionConstraint object in function FRENewb2ContactPositionConstraint");
+	}
+
+	return objInitResult;
+}
+//
 
 FREObject ane_b2ContactPositionConstraint_setter_localPoints(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;

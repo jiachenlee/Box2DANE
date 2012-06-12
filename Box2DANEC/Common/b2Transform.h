@@ -15,8 +15,45 @@
 #ifndef BOX2DANE_C_B2TRANSFORM_H_
 #define BOX2DANE_C_B2TRANSFORM_H_
 
+//Convenience functions for generating a new AS3 class instance of b2Transform
+FREResult FRENewObjectFromb2Transform(b2Transform* obj, FREObject as3Object) {
 
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[1];
+	FREGetPointerAsString((void*)obj, &memAddress);
+	constructorArguments[0] = memAddress;
+	//
 
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.common.b2Transform";
+
+	FREResult objInitResult = FRENewObject(className, 1, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2Transform object in function FRENewObjectFromb2Transform");
+	}
+
+	return objInitResult;
+}
+
+FREResult FRENewb2Transform(FREObject as3Object) {
+
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[0];
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.common.b2Transform";
+
+	FREResult objInitResult = FRENewObject(className, 0, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2Transform object in function FRENewb2Transform");
+	}
+
+	return objInitResult;
+}
+//
 
 FREObject ane_b2Transform_constructor_b2Transform(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;

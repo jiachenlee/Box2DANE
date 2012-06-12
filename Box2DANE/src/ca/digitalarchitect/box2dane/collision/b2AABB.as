@@ -17,12 +17,23 @@ package ca.digitalarchitect.box2dane.collision
 	import ca.digitalarchitect.box2dane.BaseNativeClass;
 	import ca.digitalarchitect.box2dane.common.b2Vec2;
 	
+	/* Note that we have a private variable for _center and _extents. This is because if we did not keep
+	 * a reference after the first time we call GetExtents() or GetCenter() to update, we would be
+	 * spawning new native instances every single time these properties would be read, PLUS each of
+	 * those objects would eventually fall out of scope and be garbage collected, which could also
+	 * be problematic. Note also that when accessing these b2Vec2's, they are set by the native side
+	 * to be read-only. This is because in the native version of box2D, these vectors are returned
+	 * as const references.
+	 */
+	
 	public class b2AABB extends BaseNativeClass
 	{
 
 		private var _lowerBound:b2Vec2;
-		private var _upperBound:b2Vec2;
-
+		private var _upperBound:b2Vec2;		
+		private var _center:b2Vec2;
+		private var _extents:b2Vec2;
+		
 		public function b2AABB(nativeMemoryAddress:String = null)
 		{
 			initializeContext(this, nativeMemoryAddress);
@@ -35,12 +46,22 @@ package ca.digitalarchitect.box2dane.collision
 
 		public function GetCenter():b2Vec2
 		{
-			return nativeContext.call("ane_b2AABB_callback_GetCenter") as b2Vec2;
+			if (_center == null) {
+				_center =  nativeContext.call("ane_b2AABB_callback_GetCenter") as b2Vec2
+			}else {
+				nativeContext.call("ane_b2AABB_callback_GetCenter", _center);
+			}
+			return _center;
 		}
 
 		public function GetExtents():b2Vec2
 		{
-			return nativeContext.call("ane_b2AABB_callback_GetExtents") as b2Vec2;
+			if (_extents == null) {
+				_extents =  nativeContext.call("ane_b2AABB_callback_GetExtents") as b2Vec2
+			}else {
+				nativeContext.call("ane_b2AABB_callback_GetExtents", _extents);
+			}
+			return _extents;
 		}
 
 		public function GetPerimeter():Number
@@ -74,11 +95,6 @@ package ca.digitalarchitect.box2dane.collision
 
 		public function get lowerBound():b2Vec2
 		{
-			/* In this getter, we don't want to be creating a new b2Vec2 on the stack every single
-			 * time we want to read the lowerBound variable. So, if we have already created one, we'll
-			 * simply pass it as a parameter to this getter and adjust it's values to match the values
-			 * of the b2aabb_instance.lowerBound vector.
-			 */
 			if (_lowerBound != null) {
 				nativeContext.call("ane_b2AABB_getter_lowerBound", _lowerBound);
 			}else {

@@ -25,7 +25,7 @@ package ca.digitalarchitect.box2dane.collision
 
 		public b2ClipVertex(nativeMemoryAddress:String = null)
 		{
-			
+			initializeContext(this, nativeMemoryAddress);
 		}
 
 		public function set v(val:b2Vec2):void
@@ -39,7 +39,12 @@ package ca.digitalarchitect.box2dane.collision
 
 		public function get v():b2Vec2
 		{
-			_v = nativeContext.call("ane_b2ClipVertex_getter_v", ...);
+			if (_v != null) {
+				nativeContext.call("ane_b2ClipVertex_getter_v", _v);
+			}else {
+				_v = nativeContext.call("ane_b2ClipVertex_getter_v") as b2Vec2;
+			}
+			
 			return _v;
 		}
 
@@ -49,12 +54,17 @@ package ca.digitalarchitect.box2dane.collision
 				return;
 			}
 			_id = val;
-			nativeContext.call("ane_b2ClipVertex_setter_id", ...);
+			nativeContext.call("ane_b2ClipVertex_setter_id", _id);
 		}
 
 		public function get id():b2ContactID
 		{
-			_id = nativeContext.call("ane_b2ClipVertex_getter_id", ...);
+			if (_id != null) {
+				nativeContext.call("ane_b2ClipVertex_getter_id", _id);
+			}else {
+				_id = nativeContext.call("ane_b2ClipVertex_getter_id") as b2ContactID;
+			}
+			
 			return _id;
 		}
 

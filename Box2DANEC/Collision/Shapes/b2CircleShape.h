@@ -15,7 +15,45 @@
 #ifndef BOX2DANE_C_B2CIRCLESHAPE_H_
 #define BOX2DANE_C_B2CIRCLESHAPE_H_
 
+//Convenience functions for generating a new AS3 class instance of b2CircleShape
+FREResult FRENewObjectFromb2CircleShape(b2CircleShape* obj, FREObject as3Object) {
 
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[1];
+	FREGetPointerAsString((void*)obj, &memAddress);
+	constructorArguments[0] = memAddress;
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.collision.shapes.b2CircleShape";
+
+	FREResult objInitResult = FRENewObject(className, 1, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2CircleShape object in function FRENewObjectFromb2CircleShape");
+	}
+
+	return objInitResult;
+}
+
+FREResult FRENewb2CircleShape(FREObject as3Object) {
+
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[0];
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.collision.shapes.b2CircleShape";
+
+	FREResult objInitResult = FRENewObject(className, 0, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2CircleShape object in function FRENewb2CircleShape");
+	}
+
+	return objInitResult;
+}
+//
 
 
 FREObject ane_b2CircleShape_constructor_b2CircleShape(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {

@@ -15,8 +15,45 @@
 #ifndef BOX2DANE_C_B2CONTACTVELOCITYCONSTRAINT_H_
 #define BOX2DANE_C_B2CONTACTVELOCITYCONSTRAINT_H_
 
+//Convenience functions for generating a new AS3 class instance of b2ContactVelocityConstraint
+FREResult FRENewObjectFromb2ContactVelocityConstraint(b2ContactVelocityConstraint* obj, FREObject as3Object) {
 
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[1];
+	FREGetPointerAsString((void*)obj, &memAddress);
+	constructorArguments[0] = memAddress;
+	//
 
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.dynamics.contacts.b2ContactVelocityConstraint";
+
+	FREResult objInitResult = FRENewObject(className, 1, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2ContactVelocityConstraint object in function FRENewObjectFromb2ContactVelocityConstraint");
+	}
+
+	return objInitResult;
+}
+
+FREResult FRENewb2ContactVelocityConstraint(FREObject as3Object) {
+
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[0];
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.dynamics.contacts.b2ContactVelocityConstraint";
+
+	FREResult objInitResult = FRENewObject(className, 0, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2ContactVelocityConstraint object in function FRENewb2ContactVelocityConstraint");
+	}
+
+	return objInitResult;
+}
+//
 
 FREObject ane_b2ContactVelocityConstraint_setter_normal(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;

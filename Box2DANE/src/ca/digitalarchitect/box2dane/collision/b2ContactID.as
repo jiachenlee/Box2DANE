@@ -21,7 +21,7 @@ package ca.digitalarchitect.box2dane.collision
 		private var _cf:b2ContactFeature;
 		private var _key:int;
 		
-		public function b2ContactID(nativeMemoryAddress:String) 
+		public function b2ContactID(nativeMemoryAddress:String = null) 
 		{
 			
 		}

@@ -15,8 +15,45 @@
 #ifndef BOX2DANE_C_B2CONTACT_H_
 #define BOX2DANE_C_B2CONTACT_H_
 
+//Convenience functions for generating a new AS3 class instance of b2Contact
+FREResult FRENewObjectFromb2Contact(b2Contact* obj, FREObject as3Object) {
 
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[1];
+	FREGetPointerAsString((void*)obj, &memAddress);
+	constructorArguments[0] = memAddress;
+	//
 
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.dynamics.contacts.b2Contact";
+
+	FREResult objInitResult = FRENewObject(className, 1, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2Contact object in function FRENewObjectFromb2Contact");
+	}
+
+	return objInitResult;
+}
+
+FREResult FRENewb2Contact(FREObject as3Object) {
+
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[0];
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.dynamics.contacts.b2Contact";
+
+	FREResult objInitResult = FRENewObject(className, 0, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2Contact object in function FRENewb2Contact");
+	}
+
+	return objInitResult;
+}
+//
 
 FREObject ane_b2Contact_callback_GetManifold(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;

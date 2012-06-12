@@ -24,7 +24,7 @@ FREResult FRENewObjectFromUTF8Simple(const uint8_t*  value, FREObject* object){
 //
 
 //Wrapper function for "FRENewObjectFromUTF8" that gives us an actionscript 3 formatted string of a pointer address
-FREResult FRENewObjectFromUTF8Pointer(void* pointer, FREObject* object){
+FREResult FREGetPointerAsString(void* pointer, FREObject* object){
 	std::stringstream ss;
 	ss << pointer;
 	std::string address = ss.str();
@@ -46,7 +46,7 @@ FREObject ane_getNativeDataMemoryAddress(FREContext ctx, void* functionData, uin
 
 	//Get the memory address of our native class instance
 	FREObject nativeAddress;
-	FRENewObjectFromUTF8Pointer(nativeData, &nativeAddress);
+	FREGetPointerAsString(nativeData, &nativeAddress);
 	//
 
 	/* Now we're going to pull out the AS3 class instances from the method argc array here and
@@ -108,8 +108,8 @@ void* FREGetNativeInstancePointer(FREObject obj) {
 //Collision
 #include "Box2DANEC/Collision/b2AABB.h"
 #include "Box2DANEC/Collision/b2BroadPhase.h"									//Incomplete
-#include "Box2DANEC/Collision/b2ClipVertex.h"									//Incomplete
-#include "Box2DANEC/Collision/b2ContactFeature.h"								//Incomplete
+#include "Box2DANEC/Collision/b2ClipVertex.h"
+#include "Box2DANEC/Collision/b2ContactFeature.h"
 #include "Box2DANEC/Collision/b2DistanceInput.h"								//Incomplete
 #include "Box2DANEC/Collision/b2DistanceOutput.h"								//Incomplete
 #include "Box2DANEC/Collision/b2DistanceProxy.h"								//Incomplete

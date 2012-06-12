@@ -15,8 +15,45 @@
 #ifndef BOX2DANE_C_B2ROT_H_
 #define BOX2DANE_C_B2ROT_H_
 
+//Convenience functions for generating a new AS3 class instance of b2Rot
+FREResult FRENewObjectFromb2Rot(b2Rot* obj, FREObject as3Object) {
 
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[1];
+	FREGetPointerAsString((void*)obj, &memAddress);
+	constructorArguments[0] = memAddress;
+	//
 
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.common.b2Rot";
+
+	FREResult objInitResult = FRENewObject(className, 1, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2Rot object in function FRENewObjectFromb2Rot");
+	}
+
+	return objInitResult;
+}
+
+FREResult FRENewb2Rot(FREObject as3Object) {
+
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[0];
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.common.b2Rot";
+
+	FREResult objInitResult = FRENewObject(className, 0, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2Rot object in function FRENewb2Rot");
+	}
+
+	return objInitResult;
+}
+//
 
 FREObject ane_b2Rot_constructor_b2Rot(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;

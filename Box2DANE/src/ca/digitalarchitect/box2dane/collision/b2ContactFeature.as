@@ -16,6 +16,13 @@ package ca.digitalarchitect.box2dane.collision
 {
 	import ca.digitalarchitect.box2dane.BaseNativeClass;
 	
+	/* We can get away with just creating new instances of objects in the getters in this
+	 * class. You might notice that in other classes that have getters which involve complex
+	 * types, we code the getters in such a way as to recycle existing objects, instead
+	 * of spawning who new instances every time a property is read. Well in this case they're
+	 * just uint's, so we can get away with it here. 
+	 */
+	
 	public class b2ContactFeature extends BaseNativeClass
 	{
 
@@ -26,7 +33,7 @@ package ca.digitalarchitect.box2dane.collision
 
 		public b2ContactFeature(nativeMemoryAddress:String)
 		{
-			
+			initializeContext(this, nativeMemoryAddress);
 		}
 
 		public function set indexA(val:uint):void
@@ -35,12 +42,13 @@ package ca.digitalarchitect.box2dane.collision
 				return;
 			}
 			_indexA = val;
-			nativeContext.call("ane_b2ContactFeature_setter_indexA", ...);
+			nativeContext.call("ane_b2ContactFeature_setter_indexA", _indexA);
 		}
 
 		public function get indexA():uint
 		{
-			_indexA = nativeContext.call("ane_b2ContactFeature_getter_indexA", ...);
+			_indexA = nativeContext.call("ane_b2ContactFeature_getter_indexA") as uint;
+			
 			return _indexA;
 		}
 
@@ -50,12 +58,13 @@ package ca.digitalarchitect.box2dane.collision
 				return;
 			}
 			_indexB = val;
-			nativeContext.call("ane_b2ContactFeature_setter_indexB", ...);
+			nativeContext.call("ane_b2ContactFeature_setter_indexB", _indexB);
 		}
 
 		public function get indexB():uint
 		{
-			_indexB = nativeContext.call("ane_b2ContactFeature_getter_indexB", ...);
+			_indexB = nativeContext.call("ane_b2ContactFeature_getter_indexB") as uint;
+			
 			return _indexB;
 		}
 
@@ -64,13 +73,19 @@ package ca.digitalarchitect.box2dane.collision
 			if(_readOnly == true){
 				return;
 			}
+			
+			if (val != ContactFeatureType.e_face && val != ContactFeatureType.e_vertex) {
+				throw new TypeError('Error: Assigned value to property "typeA" in class "b2ContactFeature" that is an incompatible value.');
+			}
+			
 			_typeA = val;
-			nativeContext.call("ane_b2ContactFeature_setter_typeA", ...);
+			nativeContext.call("ane_b2ContactFeature_setter_typeA", _typeA);
 		}
 
 		public function get typeA():uint
 		{
-			_typeA = nativeContext.call("ane_b2ContactFeature_getter_typeA", ...);
+			_typeA = nativeContext.call("ane_b2ContactFeature_getter_typeA") as uint;
+			
 			return _typeA;
 		}
 
@@ -79,13 +94,19 @@ package ca.digitalarchitect.box2dane.collision
 			if(_readOnly == true){
 				return;
 			}
+			
+			if (val != ContactFeatureType.e_face && val != ContactFeatureType.e_vertex) {
+				throw new TypeError('Error: Assigned value to property "typeB" in class "b2ContactFeature" that is an incompatible value.');
+			}
+			
 			_typeB = val;
-			nativeContext.call("ane_b2ContactFeature_setter_typeB", ...);
+			nativeContext.call("ane_b2ContactFeature_setter_typeB", _typeB);
 		}
 
 		public function get typeB():uint
 		{
-			_typeB = nativeContext.call("ane_b2ContactFeature_getter_typeB", ...);
+			_typeB = nativeContext.call("ane_b2ContactFeature_getter_typeB") as uint;
+			
 			return _typeB;
 		}
 

@@ -15,6 +15,45 @@
 #ifndef BOX2DANE_C_B2AABB_H_
 #define BOX2DANE_C_B2AABB_H_
 
+//Convenience functions for generating a new AS3 class instance of b2AABB
+FREResult FRENewObjectFromb2AABB(b2AABB* obj, FREObject as3Object) {
+
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[1];
+	FREGetPointerAsString((void*)obj, &memAddress);
+	constructorArguments[0] = memAddress;
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.collision.b2AABB";
+
+	FREResult objInitResult = FRENewObject(className, 1, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2AABB object in function FRENewObjectFromb2AABB");
+	}
+
+	return objInitResult;
+}
+
+FREResult FRENewb2AABB(FREObject as3Object) {
+
+	//Constructor args
+	FREObject memAddress, initException;
+	FREObject constructorArguments[0];
+	//
+
+	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.collision.b2AABB";
+
+	FREResult objInitResult = FRENewObject(className, 0, constructorArguments, &as3Object, &initException);
+
+	if(objInitResult != FRE_OK) {
+		FREError("Error creating b2AABB object in function FRENewb2AABB");
+	}
+
+	return objInitResult;
+}
+//
 
 FREObject ane_b2AABB_callback_IsValid(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;
@@ -22,7 +61,12 @@ FREObject ane_b2AABB_callback_IsValid(FREContext ctx, void* functionData, uint32
 	b2AABB* b2AABB_instance = (b2AABB*)(nativeData);
 
 	FREObject isValid;
-	FRENewObjectFromBool(b2AABB_instance->IsValid(), &isValid);
+	FREResult isValidResult = FRENewObjectFromBool(b2AABB_instance->IsValid(), &isValid);
+
+	if(isValidResult != FRE_OK) {
+			FREError("Error creating Boolean object in function ane_b2AABB_callback_IsValid");
+	}
+
 	return isValid;
 }
 
@@ -32,31 +76,53 @@ FREObject ane_b2AABB_callback_GetCenter(FREContext ctx, void* functionData, uint
 	FREGetContextNativeData(ctx, &nativeData);
 	b2AABB* b2AABB_instance = (b2AABB*)(nativeData);
 
-	b2Vec2* center = new b2Vec2(b2AABB_instance->GetCenter());
+	FREObject centerAS3Object;
 
-	/*	Create a new b2Vec2 AS3 instance */
+	if(argc == 1) {
+		/* An instance has been supplied. Update it */
+		centerAS3Object = argv[0];
+		void* centerb2Vec2Instance = FREGetNativeInstancePointer(centerAS3Object);
+		b2Vec2* center = (b2Vec2*)centerb2Vec2Instance;
+		*center = b2AABB_instance->GetCenter();
+	}else{
+		/*	Create a new b2Vec2 AS3 instance */
 
-	//AS3 b2Vec2 constructor arguments
-	FREObject valueX, valueY, b2Vec2MemAddress, b2Vec2AS3Object, initException;
-	FREObject constructorArguments[3];
-	FRENewObjectFromInt32(0, &valueX);
-	FRENewObjectFromInt32(0, &valueY);
-	FRENewObjectFromUTF8Pointer((void*)center, &b2Vec2MemAddress);
-	constructorArguments[0] = valueX;
-	constructorArguments[1] = valueY;
-	constructorArguments[2] = b2Vec2MemAddress;
-	//
+		b2Vec2* center = new b2Vec2(b2AABB_instance->GetCenter());
 
-	const uint8_t* className = (const uint8_t*)("ca.digitalarchitect.box2dane.common.b2Vec2");
+		//AS3 b2Vec2 constructor arguments
+		FREObject valueX, valueY, b2Vec2MemAddress, b2Vec2AS3Object, initException;
+		FREObject constructorArguments[3];
+		FRENewObjectFromInt32(0, &valueX);
+		FRENewObjectFromInt32(0, &valueY);
+		FREGetPointerAsString((void*)center, &b2Vec2MemAddress);
+		constructorArguments[0] = valueX;
+		constructorArguments[1] = valueY;
+		constructorArguments[2] = b2Vec2MemAddress;
+		//
 
-	FREResult objInitResult = FRENewObject(className, 3, constructorArguments, &b2Vec2AS3Object, &initException);
+		const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.common.b2Vec2";
 
-	if(objInitResult != FRE_OK) {
-		FREError("Error creating b2Vec2 object in function ane_b2AABB_callback_GetCenter");
+		FREResult objInitResult = FRENewObject(className, 3, constructorArguments, &b2Vec2AS3Object, &initException);
+
+		if(objInitResult != FRE_OK) {
+			FREError("Error creating b2Vec2 object in function ane_b2AABB_getter_center");
+		}
+		/*	End Create a new b2Vec2 AS3 instance */
+
+		centerAS3Object = b2Vec2AS3Object;
+
+		const uint8_t* propertyName = (const uint8_t*)"_readOnly";
+		bool isReadOnly = true;
+		FREObject isReadOnlyBoolean, thrownException;
+		FRENewObjectFromBool(isReadOnly, &isReadOnlyBoolean);
+		FREResult readOnlySetResult = FRESetObjectProperty(centerAS3Object, propertyName, isReadOnlyBoolean, &thrownException);
+
+		if(readOnlySetResult != FRE_OK) {
+			FREError("Error setting property as read only in function ane_b2AABB_getter_center");
+		}
 	}
-	/*	End Create a new b2Vec2 AS3 instance */
 
-	return b2Vec2AS3Object;
+	return centerAS3Object;
 }
 
  
@@ -65,31 +131,53 @@ FREObject ane_b2AABB_callback_GetExtents(FREContext ctx, void* functionData, uin
 	FREGetContextNativeData(ctx, &nativeData);
 	b2AABB* b2AABB_instance = (b2AABB*)(nativeData);
 
-	b2Vec2* getExtents = new b2Vec2(b2AABB_instance->GetExtents());
+	FREObject extentsAS3Object;
 
-	/*	Create a new b2Vec2 AS3 instance */
+	if(argc == 1) {
+		/* An instance has been supplied. Update it */
+		extentsAS3Object = argv[0];
+		void* extentsb2Vec2Instance = FREGetNativeInstancePointer(extentsAS3Object);
+		b2Vec2* extents = (b2Vec2*)extentsb2Vec2Instance;
+		*extents = b2AABB_instance->GetExtents();
+	}else{
+		/*	Create a new b2Vec2 AS3 instance */
 
-	//AS3 b2Vec2 constructor arguments
-	FREObject valueX, valueY, b2Vec2MemAddress, b2Vec2AS3Object, initException;
-	FREObject constructorArguments[3];
-	FRENewObjectFromInt32(0, &valueX);
-	FRENewObjectFromInt32(0, &valueY);
-	FRENewObjectFromUTF8Pointer((void*)getExtents, &b2Vec2MemAddress);
-	constructorArguments[0] = valueX;
-	constructorArguments[1] = valueY;
-	constructorArguments[2] = b2Vec2MemAddress;
-	//
+		b2Vec2* extents = new b2Vec2(b2AABB_instance->GetExtents());
 
-	const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.common.b2Vec2";
+		//AS3 b2Vec2 constructor arguments
+		FREObject valueX, valueY, b2Vec2MemAddress, b2Vec2AS3Object, initException;
+		FREObject constructorArguments[3];
+		FRENewObjectFromInt32(0, &valueX);
+		FRENewObjectFromInt32(0, &valueY);
+		FREGetPointerAsString((void*)extents, &b2Vec2MemAddress);
+		constructorArguments[0] = valueX;
+		constructorArguments[1] = valueY;
+		constructorArguments[2] = b2Vec2MemAddress;
+		//
 
-	FREResult objInitResult = FRENewObject(className, 3, constructorArguments, &b2Vec2AS3Object, &initException);
+		const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.common.b2Vec2";
 
-	if(objInitResult != FRE_OK) {
-		FREError("Error creating b2Vec2 object in function ane_b2AABB_callback_GetExtents");
+		FREResult objInitResult = FRENewObject(className, 3, constructorArguments, &b2Vec2AS3Object, &initException);
+
+		if(objInitResult != FRE_OK) {
+			FREError("Error creating b2Vec2 object in function ane_b2AABB_callback_GetExtents");
+		}
+		/*	End Create a new b2Vec2 AS3 instance */
+
+		extentsAS3Object = b2Vec2AS3Object;
+
+		const uint8_t* propertyName = (const uint8_t*)"_readOnly";
+		bool isReadOnly = true;
+		FREObject isReadOnlyBoolean, thrownException;
+		FRENewObjectFromBool(isReadOnly, &isReadOnlyBoolean);
+		FREResult readOnlySetResult = FRESetObjectProperty(extentsAS3Object, propertyName, isReadOnlyBoolean, &thrownException);
+
+		if(readOnlySetResult != FRE_OK) {
+			FREError("Error setting property as read only in function ane_b2AABB_getter_center");
+		}
 	}
-	/*	End Create a new b2Vec2 AS3 instance */
 
-	return b2Vec2AS3Object;
+	return extentsAS3Object;
 }
 
  
@@ -243,7 +331,7 @@ FREObject ane_b2AABB_getter_lowerBound(FREContext ctx, void* functionData, uint3
 		FREObject constructorArguments[3];
 		FRENewObjectFromInt32(0, &valueX);
 		FRENewObjectFromInt32(0, &valueY);
-		FRENewObjectFromUTF8Pointer((void*)lowerBound, &b2Vec2MemAddress);
+		FREGetPointerAsString((void*)lowerBound, &b2Vec2MemAddress);
 		constructorArguments[0] = valueX;
 		constructorArguments[1] = valueY;
 		constructorArguments[2] = b2Vec2MemAddress;
@@ -315,7 +403,7 @@ FREObject ane_b2AABB_getter_upperBound(FREContext ctx, void* functionData, uint3
 		FREObject constructorArguments[3];
 		FRENewObjectFromInt32(0, &valueX);
 		FRENewObjectFromInt32(0, &valueY);
-		FRENewObjectFromUTF8Pointer((void*)upperBound, &b2Vec2MemAddress);
+		FREGetPointerAsString((void*)upperBound, &b2Vec2MemAddress);
 		constructorArguments[0] = valueX;
 		constructorArguments[1] = valueY;
 		constructorArguments[2] = b2Vec2MemAddress;
