@@ -54,6 +54,7 @@ FREResult FRENewb2WheelJointDef(FREObject as3Object) {
 	return objInitResult;
 }
 //
+
 FREObject ane_b2WheelJointDef_constructor_b2WheelJointDef(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
 	void* nativeData;
 	FREGetContextNativeData(ctx, &nativeData);

@@ -69,13 +69,13 @@ is hidden away from him/her.
 The idea on the AS3 side is to simply interface with a native instance of the class we're using. So,
 for example, if we have an AS3 b2AABB instance, any readable property on it is a getter and setter
 that actually just does an extensionContext.call(). In this case we need to consider the very real
-possibility of creating a ton of new native instances on the stack every time a property is read. To
+possibility of creating a ton of new native instances every time a property is read. To
 deal with this issue, once a property has been set on the AS3, if it exists when the getter is called
 we simply update that instance and return it again. For example:
 
 	public function get lowerBound():b2Vec2
 	{
-		/* In this getter, we don't want to be creating a new b2Vec2 on the stack every single
+		/* In this getter, we don't want to be creating a new b2Vec2 every single
 		 * time we want to read the lowerBound variable. So, if we have already created one, we'll
 		 * simply pass it as a parameter to this getter and adjust it's values to match the values
 		 * of the b2aabb_instance.lowerBound vector.
