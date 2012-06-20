@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Box2dane by DigitalArchitectCanada</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Box2dane</h1>
+        <h2>Box2D AIR Native Extension</h2>
+        <a href="" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>Box2DANE</h1>
+
+<p>Box2D AIR Native Extension</p>
+
+<p>-- Project Setup --</p>
+
+<p>The Box2DANEC folder should be in your src directory of your project in Eclipse. Also, Box2D
+itself should be within your src folder. </p>
+
+<p>For the Actionscript side of things, the project is a Flashdevelop project. So you'll need this
+if you want to conveniently work with the AS side.</p>
+
+<p>-- Concept --</p>
+
+<p>The general idea for the design of this AIR Native Extension is that the Actionscript side should
+function purely as an interface to the methods on the native side. As such, every public method
+within Box2D (the C++ side) has been exposed to the Actionscript code, and every publically 
+available variable within the native Box2D side has been exposed to the Actionscript side as
+well through getters and setters.</p>
+
+<p>Basically for every native function in Box2D C++ there is a C function callback that the flash
+virtual machine is able to invoke through ExtensionContext instances. We then use the context
+to pull up the associated user data from C (which is usually the class instance on the native side)
+and invoke the corresponding method or read/write the appropriate property on the native side.</p>
+
+<p>Within these C callbacks, we can also contruct new Actionscript class instances and return them
+to the Flash side of things. This is the main reason why our format for the context initializer
+is either:</p>
+
+<p>"DesiredClassType"</p>
+
+<p>or</p>
+
+<p>"DesiredClassType::ObjectAddressInMemory"</p>
+
+<p>Basically by using this format, we can attach the memory address of an object on the native side
+that we specifically want our new Actionscript class instance to represent. So when we access properties
+or methods on that Actionscript object, those callbacks are invoked specifically on the native object
+at the memory address specified.</p>
+
+<p>Note however that the Actionscript developer should NEVER be providing this memory address to any
+of the Box2DANE Actionscript classes. This exists solely for the native C side to control. Here is
+an example of where this functionality is taken advantage of. Consider the following case:</p>
+
+<p>----- Example -----</p>
+
+<p>Actionscript 3 Class instance of b2World is created. The context initalizer is called, with the 
+argument of simply "b2World". This means the initializer will create a brand new instance of a 
+b2World on the native side, and then configure the Actionscript 3 instance of that b2World to 
+directly access and read/modify from this new native b2World instance.</p>
+
+<p>Now we have an Actionscript 3 instance of b2World, which directly invokes changes or reads from
+a specific b2World instance. Now we want to create a b2Body instance within that world. Well, 
+the lifecycle of a b2Body is controlled explicitly by the b2World it belongs to. So on the Actionscript
+side the method b2World.createBody(...); needs to return an Actionscript 3 instance of b2Body at the
+EXACT same time a new instance of b2Body is created on the native side. So what happens is behind the
+scenes, the b2World.createBody C callback actually returns a String which holds the native address of a
+new instance of b2Body. We then create a new b2Body Actionscript 3 instance ON THE NATIVE SIDE and
+set this new instance to be paired with the b2Body we just created on the native side. This is where
+that native address setting takes place and only ever should take place. We then return the b2Body
+Actionscript 3 instance to the AS3 side and the AS3 developer has no idea because all this stuff
+is hidden away from him/her.</p>
+
+<p>----- End Example -----</p>
+
+<p>-- Getters and Setters --</p>
+
+<p>The idea on the AS3 side is to simply interface with a native instance of the class we're using. So,
+for example, if we have an AS3 b2AABB instance, any readable property on it is a getter and setter
+that actually just does an extensionContext.call(). In this case we need to consider the very real
+possibility of creating a ton of new native instances every time a property is read. To
+deal with this issue, once a property has been set on the AS3, if it exists when the getter is called
+we simply update that instance and return it again. For example:</p>
+
+<pre><code>public function get lowerBound():b2Vec2
+{
+    /* In this getter, we don't want to be creating a new b2Vec2 every single
+     * time we want to read the lowerBound variable. So, if we have already created one, we'll
+     * simply pass it as a parameter to this getter and adjust it's values to match the values
+     * of the b2aabb_instance.lowerBound vector.
+     */
+    if (_lowerBound != null) {
+        nativeContext.call("ane_b2AABB_getter_lowerBound", _lowerBound);
+    }else {
+        _lowerBound = nativeContext.call("ane_b2AABB_getter_lowerBound") as b2Vec2;
+    }
+
+    return _lowerBound;
+}
+</code></pre>
+
+<p>On the native side, the "ane_b2AABB_getter_lowerBound" callback method simply checks to see if we've
+supplied a function argument or not. If we have, it pulls up that native instance and updates it. If
+we have not, it will create and return a new instance. This same practice is used within all like
+classes that have access controlled properties. Just for completeness, the native callback looks
+like this:</p>
+
+<pre><code>FREObject ane_b2AABB_getter_lowerBound(FREContext ctx, void* functionData, uint32_t argc, FREObject argv[]) {
+    void* nativeData;
+    FREGetContextNativeData(ctx, &amp;nativeData);
+    b2AABB* b2AABB_instance = (b2AABB*)(nativeData);
+
+    /* This getter function can work one of two ways. It can either accept a single parameter which
+     * is an AS3 b2Vec2 instance, from which we will retrive the native b2Vec2 and assign it to the
+     * value of b2AABB_instance-&gt;lowerBound. OR, if no argument is received, it means we need to create
+     * a new b2Vec2 instance, set it equal to b2AABB_instance-&gt;lowerBound and return it.
+     */
+
+    FREObject lowerBoundAS3Object;
+
+    if(argc == 1) {
+        /* An instance has been supplied. Update it */
+        lowerBoundAS3Object = argv[0];
+        void* lowerBoundb2Vec2Instance = FREGetNativeInstancePointer(lowerBoundAS3Object);
+        b2Vec2* lowerBound = (b2Vec2*)lowerBoundb2Vec2Instance;
+        *lowerBound = b2AABB_instance-&gt;lowerBound;
+    }else{
+        /*  Create a new b2Vec2 AS3 instance */
+
+        b2Vec2* lowerBound = new b2Vec2(b2AABB_instance-&gt;lowerBound);
+
+        //AS3 b2Vec2 constructor arguments
+        FREObject valueX, valueY, b2Vec2MemAddress, b2Vec2AS3Object, initException;
+        FREObject constructorArguments[3];
+        FRENewObjectFromInt32(0, &amp;valueX);
+        FRENewObjectFromInt32(0, &amp;valueY);
+        FRENewObjectFromUTF8Pointer((void*)lowerBound, &amp;b2Vec2MemAddress);
+        constructorArguments[0] = valueX;
+        constructorArguments[1] = valueY;
+        constructorArguments[2] = b2Vec2MemAddress;
+        //
+
+        const uint8_t* className = (const uint8_t*)"ca.digitalarchitect.box2dane.common.b2Vec2";
+
+        FREResult objInitResult = FRENewObject(className, 3, constructorArguments, &amp;b2Vec2AS3Object, &amp;initException);
+
+        if(objInitResult != FRE_OK) {
+            FREError("Error creating b2Vec2 object in function ane_b2AABB_getter_lowerBound");
+        }
+        /*  End Create a new b2Vec2 AS3 instance */
+
+        lowerBoundAS3Object = b2Vec2AS3Object;
+    }
+
+    return lowerBoundAS3Object;
+}
+</code></pre>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/DigitalArchitectCanada/Box2DANE/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/DigitalArchitectCanada/Box2DANE/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href=""></a> is maintained by <a href="https://github.com/DigitalArchitectCanada">DigitalArchitectCanada</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
